@@ -1,5 +1,8 @@
 package org.example;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 
@@ -23,9 +26,40 @@ public class HomeWork extends BinaryIntSearchTree {
      * Сигнатуру метода не меняем
      */
     public List<Integer> findMaxDigits(int count, int upperBound) {
-        //TODO реализовать метод
-        return null;
+        //            5
+        //      3             8
+        //   1     4       7     10
+        //      2       6      9
+
+        var result = new ArrayList<Integer>();
+        var visitedNodes = new ArrayDeque<Node>();
+        findRootNodes(root, upperBound, visitedNodes);
+        visitedNodes.forEach(v -> sumBranch(v, count, result, 1));
+        return result;
     }
 
+    private void sumBranch(Node node, int maxSize, List<Integer> result, int level) {
+        if (node.right != null && level != 1) {
+            sumBranch(node.right, maxSize, result, level + 1);
+        }
+        if (result.size() >= maxSize) {
+            return;
+        }
+        result.add(node.value);
+        if (node.left != null) {
+            sumBranch(node.left, maxSize, result, level + 1);
+        }
+    }
+    private void findRootNodes(Node node, int upperBound, Deque<Node> visited) {
+        if (node == null) {
+            return;
+        }
+        if(node.value <= upperBound) {
+            visited.push(node);
+            findRootNodes(node.right, upperBound, visited);
+        } else {
+            findRootNodes(node.left, upperBound, visited);
+        }
+    }
 
 }
